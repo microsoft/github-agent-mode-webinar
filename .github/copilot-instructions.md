@@ -1,26 +1,26 @@
-# OctoCAT Supply Chain Management Application
+# Aplicación de Gestión de Cadena de Suministro OctoCAT
 
-## GitHub Repo Information
+## Información del Repositorio GitHub
 
-This repo is hosted in GitHub:
-- owner: octodemo
+Este repositorio está alojado en GitHub:
+- propietario: octodemo
 - repo: copilot_agent_mode-urban-waddle
 
-## Architecture
+## Arquitectura
 
-The complete architecture is described in the [Architecture Document](../docs/architecture.md).
+La arquitectura completa se describe en el [Documento de Arquitectura](../docs/architecture.md).
 
-# Build and Run Instructions
+# Instrucciones de Construcción y Ejecución
 
-Refer to [build instructions](../docs/build.md) for detailed build instructions.
+Consulta las [instrucciones de construcción](../docs/build.md) para instrucciones detalladas de construcción.
 
-Every time you change the code, make sure that the code compiles by running:
+Cada vez que cambies el código, asegúrate de que el código compile ejecutando:
 
 ```bash
 npm run build
 ```
 
-To run the unit tests for the API, run:
+Para ejecutar las pruebas unitarias para la API, ejecuta:
 
 ```bash
 npm run test:api

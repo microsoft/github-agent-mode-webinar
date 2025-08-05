@@ -1,116 +1,116 @@
-# Building and Testing the OctoCAT Supply Chain Application
+# Construcción y Pruebas de la Aplicación OctoCAT Supply Chain
 
-This guide provides instructions for building, running, and testing the OctoCAT Supply Chain Management application, which consists of an API component and a React Frontend.
+Esta guía proporciona instrucciones para construir, ejecutar y probar la aplicación de Gestión de Cadena de Suministro OctoCAT, que consiste en un componente API y un Frontend React.
 
-## Prerequisites
+## Prerrequisitos
 
-- Node.js (version 18 or higher)
-- npm (latest version recommended)
-- Docker/Podman (optional, for containerization)
+- Node.js (versión 18 o superior)
+- npm (se recomienda la última versión)
+- Docker/Podman (opcional, para containerización)
 
-### Additional prerequisited for Python API
+### Prerrequisitos adicionales para la API Python
 
-- Python 3.12 (or later)
+- Python 3.12 (o posterior)
 
-### Additional prerequisited for Java API
+### Prerrequisitos adicionales para la API Java
 
- - Java 23 (or later)
+ - Java 23 (o posterior)
  - Maven
 
-## Installation
+## Instalación
 
-1. Clone the repository
-2. Install dependencies:
+1. Clona el repositorio
+2. Instala las dependencias:
    ```bash
    npm install
    ```
 
-## Building the Application
+## Construcción de la Aplicación
 
-### Using npm Commands
+### Usando Comandos npm
 
-You can build the entire application or its individual components using the following npm commands:
+Puedes construir toda la aplicación o sus componentes individuales usando los siguientes comandos npm:
 
 ```bash
-# Build both API and Frontend components
+# Construir tanto los componentes API como Frontend
 npm run build
 
-# Build only the API component
+# Construir solo el componente API
 npm run build --workspace=api
 
-# Build only the Frontend component
+# Construir solo el componente Frontend
 npm run build --workspace=frontend
 ```
 
-### Using VS Code Tasks
+### Usando Tareas de VS Code
 
-VS Code tasks have been configured to streamline the build process:
+Las tareas de VS Code han sido configuradas para agilizar el proceso de construcción:
 
-1. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS) to open the Command Palette
-2. Type `Tasks: Run Task` and select it
-3. Choose from the following tasks:
-   - `Build All`: Builds both API and Frontend components
-   - `Build API`: Builds only the API component
-   - `Build Frontend`: Builds only the Frontend component
+1. Presiona `Ctrl+Shift+P` (o `Cmd+Shift+P` en macOS) para abrir la Paleta de Comandos
+2. Escribe `Tasks: Run Task` y selecciónalo
+3. Elige una de las siguientes tareas:
+   - `Build All`: Construye tanto los componentes API como Frontend
+   - `Build API`: Construye solo el componente API
+   - `Build Frontend`: Construye solo el componente Frontend
 
-Alternatively, you can press `Ctrl+Shift+B` (or `Cmd+Shift+B` on macOS) to run the default build task (`Build All`).
+Alternativamente, puedes presionar `Ctrl+Shift+B` (o `Cmd+Shift+B` en macOS) para ejecutar la tarea de construcción predeterminada (`Build All`).
 
-## Running the Application
+## Ejecutar la Aplicación
 
-### Using npm Commands
+### Usando Comandos npm
 
 ```bash
-# Start both API and Frontend in development mode with hot reloading
+# Iniciar tanto API como Frontend en modo desarrollo con recarga automática
 npm run dev
 
-# Start only the API in development mode
+# Iniciar solo la API en modo desarrollo
 npm run dev:api
 
-# Start only the Frontend in development mode
+# Iniciar solo el Frontend en modo desarrollo
 npm run dev:frontend
 
-# Start the application in production mode (runs start:install in the API workspace)
+# Iniciar la aplicación en modo producción (ejecuta start:install en el workspace de la API)
 npm run start
 ```
 
-### Using VS Code Debugger
+### Usando el Depurador de VS Code
 
-1. Open the Debug panel (`Ctrl+Shift+D` or `Cmd+Shift+D` on macOS)
-2. Select `Start API & Frontend` from the dropdown menu
-3. Click the green play button or press F5
+1. Abre el panel de Debug (`Ctrl+Shift+D` o `Cmd+Shift+D` en macOS)
+2. Selecciona `Start API & Frontend` del menú desplegable
+3. Haz clic en el botón de reproducción verde o presiona F5
 
-This will start both the API and Frontend in development mode with the integrated terminal, allowing you to see the console output.
+Esto iniciará tanto la API como el Frontend en modo desarrollo con el terminal integrado, permitiéndote ver la salida de la consola.
 
-## Testing the Application
+## Probar la Aplicación
 
-### Running Tests
+### Ejecutar Pruebas
 
 ```bash
-# Run all tests across all workspaces
+# Ejecutar todas las pruebas en todos los workspaces
 npm run test
 
-# Run tests for a specific workspace
+# Ejecutar pruebas para un workspace específico
 npm run test --workspace=api
 ```
 
 ### Linting
 
 ```bash
-# Run linting checks on the Frontend code
+# Ejecutar verificaciones de linting en el código del Frontend
 npm run lint
 ```
 
-## Additional Information
+## Información Adicional
 
-### Port Configuration
+### Configuración de Puertos
 
-The API runs on port 3000 by default, and the Frontend runs on port 5137. When running in a Codespace environment, ensure that the API port visibility is set to `public` to avoid CORS errors when the Frontend tries to communicate with the API.
+La API se ejecuta en el puerto 3000 por defecto, y el Frontend se ejecuta en el puerto 5137. Cuando se ejecuta en un entorno de Codespace, asegúrate de que la visibilidad del puerto de la API esté configurada como `public` para evitar errores de CORS cuando el Frontend trate de comunicarse con la API.
 
-### Docker Deployment
+### Despliegue con Docker
 
-The project includes Dockerfiles for both API and Frontend components and a docker-compose.yml file for easy containerized deployment:
+El proyecto incluye Dockerfiles para ambos componentes API y Frontend y un archivo docker-compose.yml para un fácil despliegue containerizado:
 
 ```bash
-# Build and start using Docker Compose
+# Construir e iniciar usando Docker Compose
 docker-compose up --build
 ```

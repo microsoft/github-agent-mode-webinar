@@ -1,33 +1,33 @@
-# **GitHub Copilot Agent Mode & MCP Demo**
+# **Demostración de Modo Agente de GitHub Copilot y MCP**
 
-This demo app can be used to show a number of Copilot features:
+Esta aplicación de demostración puede usarse para mostrar varias características de Copilot:
 
-- **Agent Mode and Vision**: generate a fairly complex UI updated (add the Cart functionality to the site) all with a natural language prompt and an image
-- **Unit Testing**: run and generate unit tests to improve coverage
-- **MCP Server**: 
-  - generate a `.feature` file (Behaviour Driven Development/Testing file)and use Playwright to launch a browser and test the scenario
-  - Interact with GitHub via the GitHub MCP server
-- **Custom instructions**: personalize how Copilot responds by pointing to a fictional private observability framework that Copilot can work with, even though it is not a public library
-- **Security**: 
-  - Enable GHAS scans on the repo, and after finding a vulnerability, generate an autofix
-  - Ask GitHub to find vulnerabilities in the code, then explain and fix them
-- **Actions**: generate Actions workflows for deploy/publish
-- **Infrastructure as Code**: generate Bicep or Terraform files for publishing
-- **Padawan (SWE Agent)**: You can also ask Copilot to code via Padawan for some of the above scenarios by logging issues and assigning them to Copilot
+- **Modo Agente y Visión**: generar una actualización de UI bastante compleja (agregar la funcionalidad del Carrito al sitio) todo con un prompt en lenguaje natural y una imagen
+- **Pruebas Unitarias**: ejecutar y generar pruebas unitarias para mejorar la cobertura
+- **Servidor MCP**: 
+  - generar un archivo `.feature` (archivo de Desarrollo/Pruebas Orientado al Comportamiento) y usar Playwright para lanzar un navegador y probar el escenario
+  - Interactuar con GitHub a través del servidor MCP de GitHub
+- **Instrucciones personalizadas**: personalizar cómo responde Copilot apuntando a un marco de observabilidad privado ficticio con el que Copilot puede trabajar, aunque no sea una biblioteca pública
+- **Seguridad**: 
+  - Habilitar escaneos GHAS en el repositorio, y después de encontrar una vulnerabilidad, generar una corrección automática
+  - Pedir a GitHub que encuentre vulnerabilidades en el código, luego explicarlas y corregirlas
+- **Actions**: generar flujos de trabajo de Actions para despliegue/publicación
+- **Infraestructura como Código**: generar archivos Bicep o Terraform para publicación
+- **Padawan (Agente SWE)**: También puedes pedir a Copilot que programe a través de Padawan para algunos de los escenarios anteriores registrando issues y asignándoselos a Copilot
 
-> Note: For the most basic "What can Copilot do?" scenario, use the `demo-unit-test-coverage` prompt to have Agent Mode add some unit tests.
+> Nota: Para el escenario más básico "¿Qué puede hacer Copilot?", usa el prompt `demo-unit-test-coverage` para que el Modo Agente agregue algunas pruebas unitarias.
 
-### **About Up the Demo**
+### **Sobre la Configuración de la Demostración**
 
-- **About the App:** This is a modern TypeScript web-app with separate API and Frontend (React) projects that you will enhance with Copilot Agent Mode, Vision, MCP Servers and GHAS/Actions.
-- **Why:** Demonstrate how Copilot can analyze and enhance existing code automatically, understand images, vulnerabilities and testing and how you can extend Copilot's capabilities with MCP server.
-- **Demos**: You don't have to do all these demos, or do them in order. Get comfortable with the scenarios and practice them and then mix/match according to your audience.
-- **MCP Servers**: The GitHub MCP server runs via Docker. You will need to install Docker locally to run it (it should work fine in a Codespace automatically). I use Podman for my Mac. Install this _before_ you attempt this demo! You'll also need a PAT that has enough permissions for your demos. Details below.
-- **Padawan**: If you want to use Padawan, you have to ensure that it is enabled on the repo, that Actions are enabled and that you have a branch protection rule for `main`. I recommend creating a PR required for changes to Default branch with 1 required reviewer.
+- **Sobre la Aplicación:** Esta es una aplicación web TypeScript moderna con proyectos separados de API y Frontend (React) que mejorarás con el Modo Agente de Copilot, Visión, Servidores MCP y GHAS/Actions.
+- **Por qué:** Demostrar cómo Copilot puede analizar y mejorar código existente automáticamente, entender imágenes, vulnerabilidades y pruebas y cómo puedes extender las capacidades de Copilot con un servidor MCP.
+- **Demostraciones**: No tienes que hacer todas estas demostraciones, o hacerlas en orden. Familiarízate con los escenarios y practícalos y luego mezcla/combina según tu audiencia.
+- **Servidores MCP**: El servidor MCP de GitHub se ejecuta a través de Docker. Necesitarás instalar Docker localmente para ejecutarlo (debería funcionar bien en un Codespace automáticamente). Uso Podman para mi Mac. ¡Instala esto _antes_ de intentar esta demostración! También necesitarás un PAT que tenga suficientes permisos para tus demostraciones. Detalles a continuación.
+- **Padawan**: Si quieres usar Padawan, tienes que asegurar que esté habilitado en el repositorio, que Actions estén habilitadas y que tengas una regla de protección de rama para `main`. Recomiendo crear un PR requerido para cambios a la rama predeterminada con 1 revisor requerido.
 - **Local vs Codespaces:**  
-  - This demo can work in a Codespace - but some scenarios (like running Playwright tests) require that you work in a local VSCode (clone the repo locally)
-  - The visibility of the API port (3000) must be set to `public`. I have set this in the port attributes of the devcontainer file, but it seems that this config setting isn't always obeyed. Check before the demo! If you forget this, you will see CORS errors when the frontend tries to reach the API.
-  - Make sure you **PRACTICE** this demo _before_ trying it in front of customers
+  - Esta demostración puede funcionar en un Codespace - pero algunos escenarios (como ejecutar pruebas de Playwright) requieren que trabajes en un VSCode local (clonar el repositorio localmente)
+  - La visibilidad del puerto de la API (3000) debe configurarse como `public`. He configurado esto en los atributos de puerto del archivo devcontainer, pero parece que esta configuración no siempre se obedece. ¡Verifica antes de la demostración! Si olvidas esto, verás errores CORS cuando el frontend trate de alcanzar la API.
+  - Asegúrate de **PRACTICAR** esta demostración _antes_ de intentarla frente a clientes
   - Remember, Copilot is non-deterministic so you can't always predict exact behavior. Make sure you are comfortable with this environment so you can pivot quicky!
   - You don't have to use **VS Code Insiders** Version unless you want to demo features that you know are in preview.
     - If you want to access the Insiders Version in the web-version of a Codespace, click on the gear-icon on the bottom-left and select `Switch to Insiders Version...`

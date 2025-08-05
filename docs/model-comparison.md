@@ -1,64 +1,64 @@
-# Model Comparison Table
+# Tabla de Comparación de Modelos
 
-This comparison was genereated using the custom prompt file [model-compare.prompt.md](../.github/prompts/model-compare.prompt.md) and using `Gemini 2.5 Pro`. You can generatae you own using `/model-compare` in the Copilot Chat.
+Esta comparación fue generada usando el archivo de prompt personalizado [model-compare.prompt.md](../.github/prompts/model-compare.prompt.md) y usando `Gemini 2.5 Pro`. Puedes generar el tuyo usando `/model-compare` en el Chat de Copilot.
 
 > [!NOTE]
-> As the model world is moving quickly, the information in this predefined document might be outdated. Use the `/model-compare` command as described above to get a file with the latest information.
+> Como el mundo de los modelos se mueve rápidamente, la información en este documento predefinido podría estar desactualizada. Usa el comando `/model-compare` como se describe arriba para obtener un archivo con la información más reciente.
 
-## 1. Balance Between Performance and Cost
+## 1. Equilibrio Entre Rendimiento y Costo
 
-**Pros:** Good all-rounders, versatile, cost-effective options.
+**Pros:** Buenos todoterreno, versátiles, opciones costo-efectivas.
 
-| Model             | Use Case / Differentiator               | GA/Preview | Special Abilities      | Multiplier         |
+| Modelo            | Caso de Uso / Diferenciador            | GA/Preview | Habilidades Especiales | Multiplicador      |
 | ----------------- | --------------------------------------- | ---------- | ---------------------- | ------------------ |
-| GPT-4.1           | Default for common dev, broad knowledge | ✅          | Multilingual, 👓 Visual | 0 (paid), 1 (free) |
-| Claude 3.7 Sonnet | Advanced dev, architectural planning    | ✅          | -                      | 1                  |
+| GPT-4.1           | Por defecto para dev común, conocimiento amplio | ✅          | Multiidioma, 👓 Visual | 0 (pagado), 1 (gratis) |
+| Claude 3.7 Sonnet | Desarrollo avanzado, planificación arquitectónica | ✅          | -                      | 1                  |
 
-## 2. Fast, Low-Cost Support for Basic Tasks
+## 2. Soporte Rápido y de Bajo Costo para Tareas Básicas
 
-**Pros:** Speed 🚀, low latency, cost savings 💸, simple logic, quick feedback.
+**Pros:** Velocidad 🚀, baja latencia, ahorro de costos 💸, lógica simple, retroalimentación rápida.
 
-| Model             | Use Case / Differentiator                 | GA/Preview | Special Abilities | Multiplier |
-| ----------------- | ----------------------------------------- | ---------- | ----------------- | ---------- |
-| o4-mini           | Fastest, most efficient for basic tasks   | 🚧          | -                 | -          |
-| Claude 3.5 Sonnet | Everyday coding, documentation, low cost  | ✅          | -                 | 1          |
-| o3-mini           | Fast, concise for simple/repetitive tasks | ✅          | -                 | 0.33       |
+| Modelo            | Caso de Uso / Diferenciador                    | GA/Preview | Habilidades Especiales | Multiplicador |
+| ----------------- | ----------------------------------------------- | ---------- | --------------------- | ------------- |
+| o4-mini           | Más rápido, más eficiente para tareas básicas  | 🚧          | -                     | -             |
+| Claude 3.5 Sonnet | Codificación diaria, documentación, bajo costo | ✅          | -                     | 1             |
+| o3-mini           | Rápido, conciso para tareas simples/repetitivas | ✅          | -                     | 0.33          |
 
-## 3. Deep Reasoning & Complex Coding Challenges
+## 3. Razonamiento Profundo y Desafíos de Codificación Complejos
 
-**Pros:** Advanced logic, multi-step problem solving, high-quality code generation.
+**Pros:** Lógica avanzada, resolución de problemas de múltiples pasos, generación de código de alta calidad.
 
-| Model          | Use Case / Differentiator                    | GA/Preview | Special Abilities | Multiplier |
-| -------------- | -------------------------------------------- | ---------- | ----------------- | ---------- |
-| GPT-4.5        | Multi-step logic, nuanced, high-quality code | ✅          | -                 | 50 💰       |
-| o3             | Deepest reasoning, debugging, complex tasks  | 🚧          | -                 | -          |
-| o1             | Deep logic, debugging, root cause analysis   | ✅          | -                 | 10 💰       |
-| Gemini 2.5 Pro | Advanced algorithms, long-context research   | 🚧          | -                 | 1          |
+| Modelo         | Caso de Uso / Diferenciador                       | GA/Preview | Habilidades Especiales | Multiplicador |
+| -------------- | -------------------------------------------------- | ---------- | --------------------- | ------------- |
+| GPT-4.5        | Lógica multi-paso, matizada, código de alta calidad | ✅          | -                     | 50 💰          |
+| o3             | Razonamiento más profundo, depuración, tareas complejas | 🚧          | -                     | -             |
+| o1             | Lógica profunda, depuración, análisis de causa raíz | ✅          | -                     | 10 💰          |
+| Gemini 2.5 Pro | Algoritmos avanzados, investigación de contexto largo | 🚧          | -                     | 1             |
 
-## 4. Multimodal Inputs & Real-Time Performance
+## 4. Entradas Multimodales y Rendimiento en Tiempo Real
 
-**Pros:** Visual input 👓, real-time interaction, UI/diagram analysis.
+**Pros:** Entrada visual 👓, interacción en tiempo real, análisis de UI/diagramas.
 
-| Model            | Use Case / Differentiator                     | GA/Preview | Special Abilities      | Multiplier |
-| ---------------- | --------------------------------------------- | ---------- | ---------------------- | ---------- |
-| GPT-4o           | Lightweight dev, conversational, visual input | ✅          | 👓 Visual, Multilingual | 1          |
-| Gemini 2.0 Flash | UI inspection, diagram analysis, visual bugs  | ✅          | 👓 Visual               | 0.25 💸     |
-
----
-
-## References
-
-- [Choosing the right AI model for your task](https://docs.github.com/en/copilot/using-github-copilot/ai-models/choosing-the-right-ai-model-for-your-task)
-- [About premium requests](https://docs.github.com/en/enterprise-cloud@latest/copilot/managing-copilot/monitoring-usage-and-entitlements/about-premium-requests?versionId=enterprise-cloud%40latest)
+| Modelo           | Caso de Uso / Diferenciador                        | GA/Preview | Habilidades Especiales | Multiplicador |
+| ---------------- | --------------------------------------------------- | ---------- | ---------------------- | ------------- |
+| GPT-4o           | Desarrollo liviano, conversacional, entrada visual | ✅          | 👓 Visual, Multiidioma | 1             |
+| Gemini 2.0 Flash | Inspección de UI, análisis de diagramas, bugs visuales | ✅          | 👓 Visual              | 0.25 💸        |
 
 ---
 
-## Model Summary Overview: Performance vs. Quality & Cost
+## Referencias
+
+- [Elegir el modelo de IA correcto para tu tarea](https://docs.github.com/en/copilot/using-github-copilot/ai-models/choosing-the-right-ai-model-for-your-task)
+- [Sobre solicitudes premium](https://docs.github.com/en/enterprise-cloud@latest/copilot/managing-copilot/monitoring-usage-and-entitlements/about-premium-requests?versionId=enterprise-cloud%40latest)
+
+---
+
+## Resumen General de Modelos: Rendimiento vs. Calidad y Costo
 
 ```mermaid
 graph LR
-    %% Performance Category
-    subgraph "Performance (Faster - Lower Cost/Complexity)"
+    %% Categoría de Rendimiento
+    subgraph "Rendimiento (Más Rápido - Menor Costo/Complejidad)"
       o4m["o4-mini<br/>🚀💸<br/>(Preview)"]
       g2f["Gemini 2.0 Flash<br/>🚀💸👓<br/>(GA)"]
       o3m["o3-mini<br/>🚀💸<br/>(GA)"]
@@ -68,16 +68,16 @@ graph LR
       o3m --> c35s
     end
 
-    %% Balanced Category
-    subgraph "Balanced"
+    %% Categoría Equilibrada
+    subgraph "Equilibrado"
     direction TB
-    g41["GPT-4.1<br/>✅<br/>(Base Model)"]
+    g41["GPT-4.1<br/>✅<br/>(Modelo Base)"]
     g4o["GPT-4o<br/>👓<br/>(GA)"]
     g41 --> g4o
     end
 
-    %% Quality & Cost Category
-    subgraph "Quality & Cost (Higher - Higher Cost/Complexity)"
+    %% Categoría de Calidad y Costo
+    subgraph "Calidad y Costo (Mayor - Mayor Costo/Complejidad)"
     direction TB
     c37s["Claude 3.7 Sonnet<br/>✅<br/>(GA)"]
     g25p["Gemini 2.5 Pro<br/>🚧<br/>(Preview)"]
@@ -90,11 +90,11 @@ graph LR
     o3 --> g45
     end
 
-    %% Horizontal connections between categories
+    %% Conexiones horizontales entre categorías
     c35s -.-> g41
     g4o -.-> c37s
 
-    %% Styling
+    %% Estilos
     style o4m fill:#f9f,stroke:#333,stroke-width:2px,color:#000
     style g2f fill:#f9f,stroke:#333,stroke-width:2px,color:#000
     style o3m fill:#f9f,stroke:#333,stroke-width:2px,color:#000

@@ -33,4 +33,7 @@ public class Product {
     
     @Schema(description = "The image filename for the product")
     private String imgName;
+    
+    @Schema(description = "The discount percentage for the product (0.0 to 1.0)")
+    private Float discount;
 }

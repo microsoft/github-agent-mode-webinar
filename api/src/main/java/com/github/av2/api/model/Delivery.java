@@ -13,15 +13,18 @@ public class Delivery {
     @Schema(description = "The unique identifier for the delivery", required = true)
     private Integer deliveryId;
     
-    @Schema(description = "The ID of the branch this delivery is for", required = true)
-    private Integer branchId;
-    
-    @Schema(description = "The status of the delivery", required = true)
-    private String status;
+    @Schema(description = "The ID of the supplier providing this delivery", required = true)
+    private Integer supplierId;
     
     @Schema(description = "Delivery date and time")
     private String deliveryDate;
     
-    @Schema(description = "Additional notes about the delivery")
-    private String notes;
+    @Schema(description = "The name of the delivery", required = true)
+    private String name;
+    
+    @Schema(description = "Description of the delivery")
+    private String description;
+    
+    @Schema(description = "The status of the delivery", required = true)
+    private String status;
 }

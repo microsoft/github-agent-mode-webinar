@@ -1,5 +1,11 @@
 # OctoCAT Supply Chain Management Application
 
+## GitHub Repo Information
+
+This repo is hosted in GitHub:
+- owner: octodemo
+- repo: copilot_agent_mode-special-octo-palm-tree
+
 ## Architecture
 
 The complete architecture is described in the [Architecture Document](../docs/architecture.md).

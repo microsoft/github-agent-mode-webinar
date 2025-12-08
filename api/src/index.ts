@@ -10,6 +10,7 @@ import orderRoutes from './routes/order';
 import branchRoutes from './routes/branch';
 import headquartersRoutes from './routes/headquarters';
 import supplierRoutes from './routes/supplier';
+import legalRoutes from './routes/legal';
 import { initializeDatabase } from './init-db';
 import { errorHandler } from './utils/errors';
 
@@ -82,6 +83,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/branches', branchRoutes);
 app.use('/api/headquarters', headquartersRoutes);
 app.use('/api/suppliers', supplierRoutes);
+app.use('/api/legal', legalRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello, world!');

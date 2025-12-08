@@ -9,6 +9,5 @@ export default defineConfig({
       // Include json-summary so CI can read api/coverage/coverage-summary.json
       reporter: ['text', 'json', 'json-summary', 'html'],
     },
-    exclude: ['dist/**', 'node_modules/**', 'database/**']
   },
 });

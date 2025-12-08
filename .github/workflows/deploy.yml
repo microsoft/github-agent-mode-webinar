@@ -1,0 +1,39 @@
+name: 🚢 Deploy to Azure
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_image:
+        description: 'API Container Image'
+        required: true
+        type: string
+      frontend_image:
+        description: 'Frontend Container Image'
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+  attestations: read
+  packages: read
+
+env:
+  RESOURCE_GROUP_NAME: ${{ vars.AZURE_RESOURCE_GROUP_NAME }}
+  DEMO_INSTANCE_NAME: octocat_supply-musical-parakeet
+  DEMO_SLUG: octocat_supply
+  REGISTRY_URL: "ghcr.io"
+  CONTAINER_APP_ENVIRONMENT_NAME: octocat-supply-cae
+  CONTAINER_APP_ENVIRONMENT_ID: /subscriptions/408de6dc-726d-4e63-87d3-ef5bbbb30d9e/resourceGroups/dotcom--octodemo--octocat-supply-resources/providers/Microsoft.App/managedEnvironments/octocat-supply-cae
+
+
+jobs:
+  deploy:
+    name: Azure deployment disabled
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deployment disabled
+        run: echo "Azure deployment was disabled in demo creation"
+        shell: bash
+

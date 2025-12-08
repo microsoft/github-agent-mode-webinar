@@ -1,0 +1,149 @@
+name: "Verify Container Attestations"
+description: "Verifies build provenance and SBOM attestations for container images"
+
+inputs:
+  containers:
+    description: 'JSON array of container images to verify (e.g., ["image1", "image2"])'
+    required: true
+  repository:
+    description: "Repository to verify attestations against"
+    required: true
+  gh-token:
+    description: "GitHub token for attestation verification"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set GitHub Hostname
+      id: set-hostname
+      shell: bash
+      run: |
+        # Extract hostname by removing https:// prefix (GitHub always uses HTTPS)
+        hostname="${{ github.server_url }}"
+        hostname="${hostname#https://}"
+        echo "hostname=$hostname" >> $GITHUB_OUTPUT
+        echo "🌐 GitHub hostname: $hostname"
+
+    - name: Verify Build Provenance Attestations
+      id: provenance
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.gh-token }}
+        VERIFICATION_TYPE: "🏗️ build provenance"
+        GH_COMMAND: 'gh attestation verify --hostname ${{ steps.set-hostname.outputs.hostname }} -o octodemo --signer-workflow octodemo/od-octocat-supply-workflows/.github/workflows/build-publish-containers.yml "oci://CONTAINER_PLACEHOLDER"'
+      run: |
+        echo "$VERIFICATION_TYPE verification started..."
+        containers='${{ inputs.containers }}'
+        all_passed=true
+
+        echo "$containers" | jq -r '.[]' | while read -r container; do
+          echo ""
+          echo "📦 Verifying $VERIFICATION_TYPE for: $container"
+          actual_command="${GH_COMMAND/CONTAINER_PLACEHOLDER/$container}"
+          echo "Command: $actual_command"
+          
+          if eval "$actual_command"; then
+            echo "✅ ${VERIFICATION_TYPE^} verified for $container"
+          else
+            echo "❌ ${VERIFICATION_TYPE^} verification failed for $container"
+            all_passed=false
+          fi
+        done
+
+        echo "VERIFICATION_PASSED=$all_passed" >> $GITHUB_OUTPUT
+        echo ""
+        echo "$VERIFICATION_TYPE verification completed"
+
+    - name: Verify SBOM Attestations
+      id: sbom
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.gh-token }}
+        VERIFICATION_TYPE: "📋 SBOM"
+        GH_COMMAND: 'gh attestation verify --hostname ${{ steps.set-hostname.outputs.hostname }} "oci://CONTAINER_PLACEHOLDER" -o octodemo --predicate-type https://spdx.dev/Document'
+      run: |
+        echo "$VERIFICATION_TYPE verification started..."
+        containers='${{ inputs.containers }}'
+        all_passed=true
+
+        echo "$containers" | jq -r '.[]' | while read -r container; do
+          echo ""
+          echo "📦 Verifying $VERIFICATION_TYPE for: $container"
+          actual_command="${GH_COMMAND/CONTAINER_PLACEHOLDER/$container}"
+          echo "Command: $actual_command"
+          
+          if eval "$actual_command"; then
+            echo "✅ ${VERIFICATION_TYPE^} verified for $container"
+          else
+            echo "❌ ${VERIFICATION_TYPE^} verification failed for $container"
+            all_passed=false
+          fi
+        done
+
+        echo "VERIFICATION_PASSED=$all_passed" >> $GITHUB_OUTPUT
+        echo ""
+        echo "$VERIFICATION_TYPE verification completed"
+
+    - name: Generate Summary Report
+      uses: actions/github-script@v8
+      env:
+        GH_HOSTNAME: ${{ env.GH_HOSTNAME }}
+      with:
+        github-token: ${{ inputs.gh-token }}
+        script: |
+          console.log("📊 Generating verification summary report...");
+
+          const containers = JSON.parse('${{ inputs.containers }}');
+          const provenancePassed = '${{ steps.provenance.outputs.VERIFICATION_PASSED }}' === 'true';
+          const sbomPassed = '${{ steps.sbom.outputs.VERIFICATION_PASSED }}' === 'true';
+
+          const allPassed = provenancePassed && sbomPassed;
+          const hostname = '${{ steps.set-hostname.outputs.hostname }}';
+          const workflowUrl = `https://${hostname}/${{ github.repository }}/blob/main/.github/workflows/build-publish-containers.yml`;
+
+          // Build summary report
+          let summary = `# 🔍 Container Attestation Verification Report
+
+          **Approved Workflow**: [build-publish-containers.yml](${workflowUrl})
+
+          | Container Image | Provenance | SBOM | Status |
+          |----------------|------------|------|--------|
+          `;
+
+          // Add rows for each container
+          containers.forEach(container => {
+            const containerLink = `[${container}](https://${container})`;
+            const provenanceIcon = provenancePassed ? '✅' : '❌';
+            const sbomIcon = sbomPassed ? '✅' : '❌';
+            const statusIcon = allPassed ? '✅ Verified' : '❌ Failed';
+            
+            summary += `| ${containerLink} | ${provenanceIcon} | ${sbomIcon} | ${statusIcon} |\n`;
+          });
+
+          summary += '\n';
+
+          // Add overall status
+          if (allPassed) {
+            summary += `## ✅ All Verifications Passed
+
+            All container images have been successfully verified with:
+            - ✅ **Build Provenance**: Verified build attestations
+            - ✅ **SBOM**: Verified Software Bill of Materials
+            `;
+            console.log("🎉 All container attestations verified successfully!");
+          } else {
+            summary += `## ❌ Verification Failed
+
+            One or more container attestations failed verification. Deployment should not proceed.
+
+            `;
+            
+            if (!provenancePassed) summary += '- ❌ **Build Provenance**: Failed to verify build attestations\n';
+            if (!sbomPassed) summary += '- ❌ **SBOM**: Failed to verify Software Bill of Materials\n';
+            
+            console.log("❌ Container attestation verification failed!");
+            core.setFailed("Container attestation verification failed!");
+          }
+
+          await core.summary.addRaw(summary).write();

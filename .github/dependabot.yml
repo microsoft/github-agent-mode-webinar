@@ -1,0 +1,71 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "frontend"
+      ## Grouping all frontend deps - the team decided they want to update once a week
+    groups:
+      all-frontend:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/api"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "backend"
+    ## Separating Dev- and Prod-Dependencies in Backend
+    groups:
+      backend-prod:
+        dependency-type: "production"
+        patterns:
+          - "*"
+      backend-dev:
+        dependency-type: "development"
+        patterns:
+          - "*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "actions"
+    groups:
+      all-actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "docker"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "frontend"
+      - "docker"
+    groups:
+      all-frontend:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "docker"
+    directory: "/api"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "backend"
+      - "docker"
+      - "{{ demo_options.backend }}"
+    groups:
+      all-docker:
+        patterns:
+          - "*"

@@ -1,0 +1,160 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build All",
+      "dependsOrder": "sequence",
+      "command": "npm",
+      "args": [
+        "run",
+        "build"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Build API",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "build",
+        "--workspace=api"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        "$tsc"
+      ]
+    },
+    {
+      "label": "Build Frontend",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "build",
+        "--workspace=frontend"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        "$tsc"
+      ]
+    },
+    {
+      "label": "GHAS: Inject Secrets",
+      "type": "shell",
+      "command": "./demo/resources/apply_patch_set.sh",
+      "args": [
+        "secret-scanning",
+        "debug-startup-failure",
+        "${input:NEW_BRANCH}"
+      ],
+      "group": "none",
+      "isBackground": true,
+      "problemMatcher": [],
+      "promptOnClose": false,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      }
+    },
+    {
+      "label": "GHAS: Inject Dependabot Vulnerable Action",
+      "type": "shell",
+      "command": "./demo/resources/apply_patch_set.sh",
+      "args": [
+        "dependabot",
+        "add-auto-label-action",
+        "${input:NEW_BRANCH}"
+      ],
+      "group": "none",
+      "isBackground": true,
+      "problemMatcher": [],
+      "promptOnClose": false,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      }
+    },
+    {
+      "label": "Copilot: Self-Healing DevOps",
+      "type": "shell",
+      "command": "./demo/resources/apply_patch_set.sh",
+      "args": [
+        "copilot-self-healing-devops",
+        "update-branch-route-behavior",
+        "${input:NEW_BRANCH}"
+      ],
+      "group": "none",
+      "isBackground": true,
+      "problemMatcher": [],
+      "promptOnClose": false,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      }
+    },
+    {
+      "label": "Copilot: Custom Instructions",
+      "type": "shell",
+      "command": "./demo/resources/apply_patch_set.sh",
+      "args": [
+        "copilot-custom-instructions",
+        "",
+        "No"
+      ],
+      "group": "none",
+      "isBackground": true,
+      "problemMatcher": [],
+      "promptOnClose": false,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "NEW_BRANCH",
+      "description": "Create a new branch for the changes (if no, they will just be applied to the current branch)?",
+      "type": "pickString",
+      "options": [
+        "Yes",
+        "No"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,228 @@
+name: 🧪 CI - Build, Test and Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend:
+    name: Backend - Build, Test and Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+      
+    - name: Setup Node.js 24
+      uses: actions/setup-node@v6
+      with:
+        node-version: 24
+        cache: 'npm'
+        cache-dependency-path: api/package-lock.json
+        
+    - name: Install dependencies
+      working-directory: api
+      run: npm ci
+      
+    - name: Lint API
+      id: lint
+      if: always()
+      working-directory: api
+      run: npm run lint
+      
+    - name: Build API
+      id: build
+      if: always()
+      working-directory: api
+      run: npm run build
+      
+    - name: Run API Tests with Coverage
+      id: tests
+      if: always()
+      working-directory: api
+      run: npm run test:coverage
+
+    - name: Upload Coverage Reports
+      if: always()
+      uses: actions/upload-artifact@v5
+      with:
+        name: coverage-reports-backend
+        path: |
+          api/coverage/
+        retention-days: 30
+        if-no-files-found: ignore
+
+  frontend:
+    name: Frontend - Build and Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+      
+    - name: Setup Node.js 24
+      uses: actions/setup-node@v6
+      with:
+        node-version: 24
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install dependencies
+      working-directory: frontend
+      run: npm ci
+      
+    - name: Lint Frontend
+      id: lint
+      if: always()
+      working-directory: frontend
+      run: npm run lint
+      
+    - name: Build Frontend
+      id: build
+      if: always()
+      working-directory: frontend
+      run: npm run build
+
+  report:
+    name: Generate Report
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    if: always()
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+
+    - name: Download Coverage Reports
+      uses: actions/download-artifact@v5
+      with:
+        name: coverage-reports-backend
+        path: api/coverage/
+      continue-on-error: true
+
+        
+    - name: Generate Reports and Comment
+      if: always()
+      uses: actions/github-script@v8
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Get job results
+          const backendResult = '${{ needs.backend.result }}';
+          const frontendResult = '${{ needs.frontend.result }}';
+          
+          const backendSuccess = backendResult === 'success';
+          const frontendSuccess = frontendResult === 'success';
+          
+          // Check for coverage data
+          let coverage = 0;
+          let coverageAvailable = false;
+          let coverageData = null;
+          
+          try {
+            const coveragePath = 'api/coverage/coverage-summary.json';
+            if (fs.existsSync(coveragePath)) {
+              coverageData = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
+              coverage = coverageData.total.lines.pct || 0;
+              coverageAvailable = true;
+            }
+          } catch (error) {
+            console.log('Coverage file not found or invalid:', error.message);
+          }
+          
+          // Determine coverage badge color
+          let coverageColor = 'red';
+          if (coverage >= 80) coverageColor = 'brightgreen';
+          else if (coverage >= 60) coverageColor = 'yellow';
+          
+          // Generate unified markdown report
+          function generateReport(title = '# 🚀 OctoCAT Supply Chain - Build & Test Results') {
+            let report = `${title}\n\n`;
+            
+            // Build status table
+            report += `| Component | Status |\n`;
+            report += `|-----------|--------|\n`;
+            report += `| Backend | ${backendSuccess ? '✅ Passed' : '❌ Failed'} |\n`;
+            report += `| Frontend | ${frontendSuccess ? '✅ Passed' : '❌ Failed'} |\n\n`;
+            
+            // Coverage section
+            if (coverageAvailable) {
+              report += `### 📊 Test Coverage\n\n`;
+              report += `![Coverage](https://img.shields.io/badge/Coverage-${coverage}%25-${coverageColor})\n\n`;
+              
+              if (coverageData) {
+                report += `| Metric | Coverage | Covered | Total |\n`;
+                report += `|--------|----------|---------|-------|\n`;
+                report += `| 📝 Lines | ${coverageData.total.lines.pct || 0}% | ${coverageData.total.lines.covered || 0} | ${coverageData.total.lines.total || 0} |\n`;
+                report += `| 📋 Statements | ${coverageData.total.statements.pct || 0}% | ${coverageData.total.statements.covered || 0} | ${coverageData.total.statements.total || 0} |\n`;
+                report += `| 🔧 Functions | ${coverageData.total.functions.pct || 0}% | ${coverageData.total.functions.covered || 0} | ${coverageData.total.functions.total || 0} |\n`;
+                report += `| 🌳 Branches | ${coverageData.total.branches.pct || 0}% | ${coverageData.total.branches.covered || 0} | ${coverageData.total.branches.total || 0} |\n\n`;
+              }
+              
+              if (!backendSuccess) {
+                report += `> ℹ️ Coverage report was generated despite backend failures\n\n`;
+              }
+            } else if (backendResult !== 'skipped') {
+              report += `### ⚠️ Coverage Report\nNo coverage data available\n\n`;
+            }
+            
+            // Summary
+            const failedJobs = [];
+            if (!backendSuccess) failedJobs.push('backend');
+            if (!frontendSuccess) failedJobs.push('frontend');
+            
+            if (failedJobs.length === 0) {
+              report += `### 🎉 All checks passed!\n`;
+            } else {
+              report += `### ⚠️ Some checks failed\nFailed jobs: ${failedJobs.join(', ')}\n`;
+            }
+            
+            if (coverageAvailable) {
+              report += `\n<details>\n<summary>📁 View detailed coverage report</summary>\n\nCoverage artifacts are available in the workflow run.\n\n</details>`;
+            }
+            
+
+            
+            return report;
+          }
+          
+          // Write to step summary
+          await core.summary.addRaw(generateReport()).write();
+          
+          // Generate PR comment if this is a pull request (but skip Dependabot PRs)
+          if (context.eventName === 'pull_request' && context.payload.pull_request.user.login !== 'dependabot[bot]') {
+            const comment = generateReport('## 📊 CI Results Summary');
+            
+            // Check if a comment already exists and update or create
+            const comments = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100
+            });
+            
+            const existingComment = comments.data.find(comment => 
+              comment.body.includes('## 📊 CI Results Summary') || 
+              comment.body.includes('## 📊 Test Coverage Report')
+            );
+            
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                comment_id: existingComment.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+          }

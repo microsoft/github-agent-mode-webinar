@@ -1,0 +1,133 @@
+name: Failed Run Autofix
+description: >-
+  Analyzes CI/CD pipeline failures for the OctoCAT Supply Chain Management
+  application and provides detailed remediation plans
+model: openai/gpt-4.1
+modelParameters:
+  temperature: 0.1
+  max_tokens: 10000
+messages:
+  - role: system
+    content: >
+      You are an expert DevOps engineer and build master with deep knowledge of
+      CI/CD pipelines,  build systems, and software development workflows. You
+      specialize in analyzing build failures  and providing actionable
+      remediation plans for the OctoCAT Supply Chain Management application.
+
+      Your task is to analyze failed CI/CD pipeline runs and determine: 1.
+      Whether the failure is transient (network issues, temporary service
+      outages, etc.) 2. The root cause and category of the failure 3. A detailed
+      plan for fixing the issue
+
+      When analyzing logs, look for: - Compilation errors (TypeScript, build
+      tool issues) - Test failures (unit tests, integration tests) - Dependency
+      issues (missing packages, version conflicts) - Configuration problems
+      (environment variables, config files) - Infrastructure issues (network
+      timeouts, service unavailability) - Code quality issues (linting,
+      formatting)
+
+      Provide your analysis in the specified JSON format with clear, actionable
+      recommendations.
+  - role: user
+    content: >
+      ## CI/CD Pipeline Failure Logs
+
+      Use the GitHub MCP `get_job_logs` tool to retrieve failed job logs from
+      the specified workflow run. Only fetch 100 lines of logs!
+        - Repo: {{repo}}
+        - Owner: {{owner}}
+        - Workflow Run ID: {{workflow_run_id}}
+
+      Analyze the failure logs and provide a comprehensive assessment including
+      whether this is a  transient failure that can be resolved by re-running
+      the workflow, or if it requires code  changes. If code changes are needed,
+      provide a detailed remediation plan. Keep the summary short and DO NOT include
+      the entire build log. Only ever fetch at max. the last 100 lines from the log.
+testData:
+  - name: dependency_missing
+    failure_logs: |
+      Error: Cannot find module 'tsx'
+      npm ERR! Missing script: "dev"
+      npm ERR! Available scripts:
+      npm ERR!   build
+      npm ERR!   test
+    expected: |
+      {
+        "transient": false,
+        "summary": "Missing dependency 'tsx' and 'dev' script not found in package.json",
+        "plan": "1. Install tsx dependency: npm install tsx --save-dev\n2. Add 'dev' script to package.json scripts section\n3. Verify all required dependencies are listed in package.json",
+        "category": "dependency"
+      }
+  - name: compilation_error
+    failure_logs: >
+      src/index.ts(15,23): error TS2339: Property 'invalidProperty' does not
+      exist on type 'User'
+
+      npm ERR! code ELIFECYCLE
+
+      npm ERR! errno 2
+    expected: |
+      {
+        "transient": false,
+        "summary": "TypeScript compilation error - invalid property access on User type",
+        "plan": "1. Review the User type definition to check available properties\n2. Either add the missing property to the User interface or fix the property name\n3. Run type checking locally before committing: npm run build",
+        "category": "code"
+      }
+  - name: transient_network_failure
+    failure_logs: |
+      Error: connect ETIMEDOUT 104.16.16.35:443
+      npm ERR! network request to https://registry.npmjs.org/ failed
+      npm ERR! This is most likely not a problem with npm itself
+    expected: |
+      {
+        "transient": true,
+        "summary": "Network timeout connecting to npm registry",
+        "plan": "Re-run the workflow as this appears to be a temporary network connectivity issue",
+        "category": "infrastructure"
+      }
+evaluators:
+  - name: Response should be valid JSON
+    string:
+      isJSON: true
+  - name: Should include transient field
+    string:
+      contains: '"transient"'
+  - name: Should include summary field
+    string:
+      contains: '"summary"'
+  - name: Should include plan field
+    string:
+      contains: '"plan"'
+  - name: Should include category field
+    string:
+      contains: '"category"'
+responseFormat: json_schema
+jsonSchema: |-
+  {
+    "name": "failure_analysis",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "transient": {
+          "type": "boolean",
+          "description": "Whether this is a transient failure that can be resolved by re-running the workflow"
+        },
+        "summary": {
+          "type": "string",
+          "description": "A concise summary of the failure cause"
+        },
+        "plan": {
+          "type": "string",
+          "description": "A detailed step-by-step plan for fixing the failure"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["code", "test", "config", "dependency", "infrastructure", "quality", "repeat-transient"],
+          "description": "The category of failure: code (compilation/logic errors), test (test failures), config (configuration issues), dependency (missing/incompatible packages), infrastructure (network/service issues), quality (linting/formatting)"
+        }
+      },
+      "required": ["transient", "summary", "plan", "category"],
+      "additionalProperties": false
+    }
+  }

@@ -1,0 +1,90 @@
+name: Test Auto-Analysis (Intentional Failure)
+
+on:
+  workflow_dispatch:
+    inputs:
+      failure_type:
+        description: 'Type of failure to simulate'
+        required: true
+        default: 'compilation_error'
+        type: choice
+        options:
+        - compilation_error
+        - test_failure
+        - dependency_issue
+        - transient_network
+        - linting_error
+
+jobs:
+  simulate-failure:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v5
+      with:
+        node-version: '24'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Simulate compilation error
+      if: github.event.inputs.failure_type == 'compilation_error'
+      run: |
+        echo "Simulating TypeScript compilation error..."
+        echo "export const invalidSyntax = function( { return 'broken'; }" >> api/src/index.ts
+        npm run build --workspace=api
+    
+    - name: Simulate test failure
+      if: github.event.inputs.failure_type == 'test_failure'
+      run: |
+        echo "Simulating test failure..."
+        # Create a failing test
+        cat > api/src/test-failure.test.ts << 'EOF'
+        import { describe, it, expect } from 'vitest';
+        
+        describe('Intentional Test Failure', () => {
+          it('should fail to test auto-analysis', () => {
+            expect(true).toBe(false);
+          });
+        });
+        EOF
+        npm run test --workspace=api
+    
+    - name: Simulate dependency issue
+      if: github.event.inputs.failure_type == 'dependency_issue'
+      run: |
+        echo "Simulating dependency resolution error..."
+        echo '{"dependencies": {"non-existent-package": "999.999.999"}}' > temp-package.json
+        npm install non-existent-package@999.999.999
+    
+    - name: Simulate transient network error
+      if: github.event.inputs.failure_type == 'transient_network'
+      run: |
+        echo "Simulating transient network error..."
+        # Create a random failure that looks like a network issue
+        # This will fail ~80% of the time to simulate transient issues
+        RANDOM_NUM=$((RANDOM % 10))
+        echo "Random number: $RANDOM_NUM"
+        
+        if [ $RANDOM_NUM -lt 8 ]; then
+          echo "❌ Simulating network timeout/connection refused..."
+          echo "curl: (7) Failed to connect to registry.npmjs.org port 443: Connection refused"
+          echo "npm ERR! network request to https://registry.npmjs.org/some-package failed, reason: connect ECONNREFUSED"
+          echo "npm ERR! network This is a temporary failure, please try again later."
+          exit 1
+        else
+          echo "✅ Network request succeeded (simulating successful retry)"
+          echo "Successfully connected to external service"
+        fi
+    
+    - name: Simulate linting error
+      if: github.event.inputs.failure_type == 'linting_error'
+      run: |
+        echo "Simulating ESLint errors..."
+        echo "var unused_variable = 'this will cause linting errors';;;" >> frontend/src/App.tsx
+        npm run lint --workspace=frontend
